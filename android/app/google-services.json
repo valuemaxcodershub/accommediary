@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "215881434456",
+    "project_id": "accommediary-a8703",
+    "storage_bucket": "accommediary-a8703.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:215881434456:android:ec8265a29e7de8dc7a112d",
+        "android_client_info": {
+          "package_name": "com.example.accommediary"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHm2k7yVHWaVhzlzTcfYWs6u0hpwySTqg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
