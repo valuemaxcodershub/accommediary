@@ -55,8 +55,26 @@ class _LandlordForgotPasswordScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(onPressed: () => Navigator.pop(context)),
-        title: const Text('Reset Password'),
+        backgroundColor: const Color(0xFF2ECC71), // Brand green
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Row(
+          children: [
+            // Optional: Uncomment this if you have a logo asset
+            // Image.asset(
+            //   'assets/images/acc_logo.png',
+            //   height: 30,
+            // ),
+            // const SizedBox(width: 8),
+            const Text(
+              'Reset Password',
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
         centerTitle: true,
       ),
       body: SafeArea(

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class LandlordSignupScreen extends StatefulWidget {
   const LandlordSignupScreen({super.key});
@@ -10,7 +10,6 @@ class LandlordSignupScreen extends StatefulWidget {
 
 class _LandlordSignupScreenState extends State<LandlordSignupScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final _fullNameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
@@ -34,28 +33,39 @@ class _LandlordSignupScreenState extends State<LandlordSignupScreen> {
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
-      final email = _emailController.text.trim();
-      final password = _passwordController.text.trim();
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-      final userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
-
-      await userCredential.user?.sendEmailVerification();
+      await FirebaseAuth.instance.currentUser?.sendEmailVerification();
 
       if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text("Verification email sent. Please check your inbox.")),
+            content: Text('Verification email sent. Please check your inbox.')),
       );
 
       Navigator.pushReplacementNamed(context, '/landlord_verify_email');
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? "Registration failed")),
+        SnackBar(content: Text(e.message ?? 'Something went wrong')),
       );
     } finally {
       if (mounted) {
@@ -68,34 +78,35 @@ class _LandlordSignupScreenState extends State<LandlordSignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(onPressed: () => Navigator.pop(context)),
-        title: const Text("Landlord Sign Up"),
+        backgroundColor: const Color(0xFF2ECC71),
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Landlord Sign Up',
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
-                const Text(
-                  "Create a Landlord Account",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _fullNameController,
                   decoration: const InputDecoration(
                     labelText: 'Full Name',
                     border: OutlineInputBorder(),
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Full name is required';
-                    }
-                    return null;
-                  },
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Full name is required'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -105,12 +116,9 @@ class _LandlordSignupScreenState extends State<LandlordSignupScreen> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.phone,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Phone number is required';
-                    }
-                    return null;
-                  },
+                  validator: (value) => value == null || value.isEmpty
+                      ? 'Phone number is required'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -121,9 +129,10 @@ class _LandlordSignupScreenState extends State<LandlordSignupScreen> {
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.trim().isEmpty) {
                       return 'Email is required';
-                    } else if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                    }
+                    if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
                       return 'Enter a valid email';
                     }
                     return null;
@@ -174,7 +183,7 @@ class _LandlordSignupScreenState extends State<LandlordSignupScreen> {
                     ),
                   ),
                   validator: (value) {
-                    if (value != _passwordController.text) {
+                    if (value == null || value != _passwordController.text) {
                       return 'Passwords do not match';
                     }
                     return null;
@@ -183,18 +192,18 @@ class _LandlordSignupScreenState extends State<LandlordSignupScreen> {
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: 48,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _register,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text("Create Account"),
+                        : const Text('Register'),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -202,7 +211,7 @@ class _LandlordSignupScreenState extends State<LandlordSignupScreen> {
                   onPressed: () {
                     Navigator.pushReplacementNamed(context, '/landlord_login');
                   },
-                  child: const Text("Already have an account? Log in"),
+                  child: const Text("Already have an account? Sign in here"),
                 ),
               ],
             ),
