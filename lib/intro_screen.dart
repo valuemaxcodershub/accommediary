@@ -92,7 +92,7 @@ class _IntroScreenState extends State<IntroScreen>
                       borderRadius: BorderRadius.circular(14),
                     ),
                     elevation: 5,
-                    shadowColor: Colors.green.withOpacity(0.4),
+                    shadowColor: Colors.green.withValues(alpha: 0.4),
                   ),
                   child: Text(
                     'Get Started',

@@ -21,23 +21,27 @@ migrate_working_dir/
 # is commented out by default.
 #.vscode/
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Flutter/Dart/Pub
 .dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
+.packages
+build/
+pubspec.lock
 
-# Symbolication related
-app.*.symbols
+# Android
+local.properties
+*.iml
+.gradle/
+android/app/google-services.json
 
-# Obfuscation related
-app.*.map.json
+# iOS
+ios/Runner/GoogleService-Info.plist
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Firebase
+firebase/serviceAccountKey.json
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/

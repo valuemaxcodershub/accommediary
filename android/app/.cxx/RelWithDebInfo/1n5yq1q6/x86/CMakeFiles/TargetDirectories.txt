@@ -1,0 +1,2 @@
+C:/Users/TunjiValuemax/Desktop/accommodiary/accomediary/accommediary/android/app/.cxx/RelWithDebInfo/1n5yq1q6/x86/CMakeFiles/edit_cache.dir
+C:/Users/TunjiValuemax/Desktop/accommodiary/accomediary/accommediary/android/app/.cxx/RelWithDebInfo/1n5yq1q6/x86/CMakeFiles/rebuild_cache.dir

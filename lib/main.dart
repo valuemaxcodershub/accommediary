@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+// Firebase config
 import 'firebase_options.dart';
 
-// Screens
+// Core screens
 import 'intro_screen.dart';
 import 'loading_screen.dart';
 import 'landlord_signup_screen.dart';
 import 'landlord_login_screen.dart';
 import 'landlord_verify_email_screen.dart';
 import 'landlord_dashboard_screen.dart';
-import 'landlord_forgot_password_screen.dart'; // ✅ matches route name
+import 'landlord_forgot_password_screen.dart';
+import 'landlord_settings_screen.dart';
+import 'landlord_profile_screen.dart';
+import 'change_password_screen.dart';
+
+// Dashboard inner screens (Placeholder implementations for now)
+import 'wallet_screen.dart';
+import 'my_apartment_screen.dart';
+import 'pending_transactions_screen.dart';
+import 'transaction_screen.dart';
+import 'contact_screen.dart';
+import 'notification_screen.dart';
+import 'add_apartment_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +57,19 @@ class AccommediaryApp extends StatelessWidget {
         '/landlord_verify_email': (_) => const LandlordVerifyEmailScreen(),
         '/landlord_dashboard': (_) => const LandlordDashboardScreen(),
         '/landlord_forgot_password': (_) =>
-            const LandlordForgotPasswordScreen(), // ✅ Fixed
+            const LandlordForgotPasswordScreen(),
+        '/landlord_settings': (_) => const LandlordSettingsScreen(),
+        '/profile': (_) => const LandlordProfileScreen(),
+        '/change_password': (_) => const ChangePasswordScreen(),
+
+        // 🟩 Dashboard inner links
+        '/wallet': (_) => const WalletScreen(),
+        '/my_apartment': (_) => const MyApartmentScreen(),
+        '/pending_transactions': (_) => const PendingTransactionsScreen(),
+        '/transaction': (_) => const TransactionScreen(),
+        '/contact': (_) => const ContactScreen(),
+        '/notification': (_) => const NotificationScreen(),
+        '/add_apartment': (_) => const AddApartmentScreen(),
       },
     );
   }
@@ -158,7 +184,7 @@ class _ActionButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           elevation: 4,
-          shadowColor: Colors.green.withOpacity(0.45),
+          shadowColor: Colors.green.withValues(alpha: 0.45),
         ),
         child: Text(label),
       ),
