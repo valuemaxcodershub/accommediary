@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '2.0.0' // or latest stable
+    ext.kotlin_version = '1.9.0'
     repositories {
         google()
         mavenCentral()
@@ -18,3 +18,18 @@ allprojects {
         mavenCentral()
     }
 }
+
+// android {
+//     compileSdkVersion 34
+//     buildToolsVersion "34.0.0"
+
+//     defaultConfig {
+//         applicationId "com.example.accommediary"
+//         minSdkVersion 21
+//         targetSdkVersion 34
+//         versionCode 1
+//         versionName "1.0.0"
+//         // ...other config...
+//     }
+//     // ...rest of the file...
+// }

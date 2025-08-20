@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LandlordSignupScreen extends StatefulWidget {
   const LandlordSignupScreen({super.key});
@@ -30,9 +32,11 @@ class _LandlordSignupScreenState extends State<LandlordSignupScreen> {
     super.dispose();
   }
 
-  Future<void> _register() async {
+  Future<void> _registerWithApi() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final fullName = _fullNameController.text.trim();
+    final phone = _phoneController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
@@ -47,25 +51,56 @@ class _LandlordSignupScreenState extends State<LandlordSignupScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      // Register landlord in Firebase Auth first
+      final userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      final user = userCredential.user;
+      await user?.sendEmailVerification();
 
-      await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+      // Get Firebase ID token for backend authentication
+      final idToken = await user?.getIdToken();
+      debugPrint('$idToken'); // Use debugPrint
+
+      // Register landlord in your backend
+      final response = await http.post(
+        Uri.parse('https://api.accommediary.com.ng/api/landlord/register'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
+        body: jsonEncode({
+          'fullName': fullName,
+          'phone': phone,
+          'email': email,
+        }),
+      );
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Verification email sent. Please check your inbox.')),
-      );
-
-      Navigator.pushReplacementNamed(context, '/landlord_verify_email');
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content:
+                  Text('Verification email sent. Please check your inbox.')),
+        );
+        Navigator.pushReplacementNamed(context, '/landlord_verify_email');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Backend error: ${response.body}')),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? 'Something went wrong')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to register')),
       );
     } finally {
       if (mounted) {
@@ -194,7 +229,7 @@ class _LandlordSignupScreenState extends State<LandlordSignupScreen> {
                   width: double.infinity,
                   height: 48,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _register,
+                    onPressed: _isLoading ? null : _registerWithApi,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       shape: RoundedRectangleBorder(

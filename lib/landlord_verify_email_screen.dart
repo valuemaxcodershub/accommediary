@@ -31,26 +31,35 @@ class _LandlordVerifyEmailScreenState extends State<LandlordVerifyEmailScreen> {
     setState(() => _isVerifying = true);
 
     try {
-      await FirebaseAuth.instance.currentUser?.reload();
       final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        setState(() {
+          _statusMessage = "No user found. Please log in again.";
+        });
+        return;
+      }
 
-      if (user != null && user.emailVerified) {
+      await user.reload();
+      final refreshedUser = FirebaseAuth.instance.currentUser;
+
+      if (refreshedUser != null && refreshedUser.emailVerified) {
         if (!mounted) return;
         Navigator.pushReplacementNamed(context, '/landlord_dashboard');
       } else {
         if (!mounted) return;
         setState(() {
-          _isVerifying = false;
           _statusMessage =
-              "Email not yet verified. Please check your inbox or spam.";
+              "Email not yet verified. Please check your inbox or spam. You can click the button again after verifying.";
         });
       }
     } catch (e) {
+      debugPrint("Verification error: $e");
       if (!mounted) return;
       setState(() {
-        _isVerifying = false;
         _statusMessage = "An error occurred: ${e.toString()}";
       });
+    } finally {
+      if (mounted) setState(() => _isVerifying = false);
     }
   }
 

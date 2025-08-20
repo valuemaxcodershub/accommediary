@@ -15,6 +15,7 @@ import 'landlord_forgot_password_screen.dart';
 import 'landlord_settings_screen.dart';
 import 'landlord_profile_screen.dart';
 import 'change_password_screen.dart';
+import 'tenant_cart_accommodation_screen.dart';
 
 // Dashboard inner screens (Placeholder implementations for now)
 import 'wallet_screen.dart';
@@ -24,6 +25,16 @@ import 'transaction_screen.dart';
 import 'contact_screen.dart';
 import 'notification_screen.dart';
 import 'add_apartment_screen.dart';
+import 'tenant_accommodation_screen.dart';
+
+// Tenant screens
+import 'tenant_login_screen.dart';
+import 'tenant_dashboard_screen.dart';
+
+import 'tenant_forgot_password_screen.dart';
+import 'tenant_signup_screen.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +58,7 @@ class AccommediaryApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
+      navigatorKey: navigatorKey,
       initialRoute: '/intro',
       routes: {
         '/intro': (_) => const IntroScreen(),
@@ -70,6 +82,19 @@ class AccommediaryApp extends StatelessWidget {
         '/contact': (_) => const ContactScreen(),
         '/notification': (_) => const NotificationScreen(),
         '/add_apartment': (_) => const AddApartmentScreen(),
+        '/dashboard': (context) =>
+            const LandlordDashboardScreen(), // Added line
+
+        // Tenant routes
+        '/tenant_login': (context) => TenantLoginScreen(),
+        '/tenant_dashboard': (context) => TenantDashboardScreen(),
+        '/tenant_register': (context) => TenantSignupScreen(),
+        '/tenant_forgot_password': (context) => TenantForgotPasswordScreen(),
+        '/tenant_pending_accommodation': (context) =>
+            TenantAccommodationListing(),
+        '/tenant_cart_accommodation': (context) =>
+            const TenantCartAccommodationScreen(),
+        '/browse_accommodation': (context) => TenantAccommodationListing(),
       },
     );
   }
@@ -140,9 +165,10 @@ class MainPage extends StatelessWidget {
                 _ActionButton(
                   label: 'Get Accommodation',
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Tenant flow coming soon'),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TenantAccommodationListing(),
                       ),
                     );
                   },
